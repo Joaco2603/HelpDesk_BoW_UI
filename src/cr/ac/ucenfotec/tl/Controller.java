@@ -1,30 +1,29 @@
 package tl;
 
-import cr.ac.ucenfotec.bl.entities.Departamento;
-import cr.ac.ucenfotec.bl.entities.Ticket;
-import cr.ac.ucenfotec.bl.entities.Usuario;
 import cr.ac.ucenfotec.bl.logic.GestorDepartamento;
 import cr.ac.ucenfotec.bl.logic.GestorTicket;
 import cr.ac.ucenfotec.bl.logic.GestorUsuario;
 import cr.ac.ucenfotec.ui.UI;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Controller {
     // UI para interactuar con el usuario
     private UI interfaz = new UI();
     
-    // Handlers para manejar las entidades
-    private final GestorUsuario usuarioHandler = new GestorUsuario();
-    private final GestorDepartamento departamentoHandler = new GestorDepartamento();
-    private final GestorTicket ticketHandler = new GestorTicket();
+    // Handlers para manejar las entidades (inyectados desde afuera)
+    private final GestorUsuario usuarioHandler;
+    private final GestorDepartamento departamentoHandler;
+    private final GestorTicket ticketHandler;
     
-    // Usuario actualmente autenticado
-    private Usuario usuarioActual = null;
+    // ID del usuario actualmente autenticado
+    private String usuarioActualId = null;
     private boolean isLogged = false;
 
-    public Controller() {
+    public Controller(GestorUsuario usuarioHandler, GestorDepartamento departamentoHandler, GestorTicket ticketHandler) {
+        this.usuarioHandler = usuarioHandler;
+        this.departamentoHandler = departamentoHandler;
+        this.ticketHandler = ticketHandler;
     }
 
     // ==================== MÉTODO PRINCIPAL ====================
@@ -211,9 +210,9 @@ public class Controller {
         interfaz.imprimirMensaje("Contraseña: ");
         String password = interfaz.leerTexto();
         
-        Usuario usuario = login(correo, password);
-        if (usuario != null) {
-            interfaz.imprimirMensaje("\n✓ Bienvenido/a " + usuario.getNombre() + "!");
+        String resultado = login(correo, password);
+        if (resultado != null) {
+            interfaz.imprimirMensaje("\n✓ Bienvenido/a!");
             redirigirSegunRol();
         } else {
             interfaz.imprimirMensaje("\n❌ Credenciales incorrectas. Intente nuevamente.");
@@ -233,8 +232,8 @@ public class Controller {
         interfaz.imprimirMensaje("Teléfono: ");
         String telefono = interfaz.leerTexto();
         
-        Usuario usuario = register(cedula, nombre, correo, password, telefono);
-        if (usuario != null) {
+        String resultado = register(cedula, nombre, correo, password, telefono);
+        if (resultado != null) {
             interfaz.imprimirMensaje("\n✓ Registro exitoso! Bienvenido al sistema.");
             redirigirSegunRol();
         } else {
@@ -243,9 +242,9 @@ public class Controller {
     }
 
     private void redirigirSegunRol() throws IOException {
-        if (usuarioActual == null) return;
+        if (usuarioActualId == null) return;
         
-        String rol = usuarioActual.getRol().toLowerCase();
+        String rol = usuarioHandler.getRolByUsuarioId(usuarioActualId).toLowerCase();
         switch (rol) {
             case "admin":
                 mostrarMenuAdmin();
@@ -280,8 +279,8 @@ public class Controller {
         interfaz.imprimirMensaje("ID del Departamento: ");
         int departamentoId = interfaz.leerOpcion();
         
-        Ticket ticket = crearTicket(id, asunto, descripcion, prioridad, departamentoId);
-        if (ticket != null) {
+        boolean exito = crearTicket(id, asunto, descripcion, prioridad, departamentoId);
+        if (exito) {
             interfaz.imprimirMensaje("\n✓ Ticket creado exitosamente.");
         } else {
             interfaz.imprimirMensaje("\n❌ Error al crear el ticket.");
@@ -290,50 +289,39 @@ public class Controller {
 
     private void verMisTickets() {
         interfaz.imprimirMensaje("\n=== MIS TICKETS ===");
-        ArrayList<Ticket> tickets = getTicketsPorUsuario();
+        String tickets = getTicketsPorUsuario();
         if (tickets.isEmpty()) {
             interfaz.imprimirMensaje("No tiene tickets registrados.");
         } else {
-            for (Ticket t : tickets) {
-                interfaz.imprimirMensaje("ID: " + t.getId() + " | Asunto: " + t.getAsunto() + 
-                                       " | Estado: " + t.getEstado() + " | Prioridad: " + t.getPrioridad());
-            }
+            interfaz.imprimirMensaje(tickets);
         }
     }
 
     private void verTodosLosTickets() {
         interfaz.imprimirMensaje("\n=== TODOS LOS TICKETS ===");
-        ArrayList<Ticket> tickets = getAllTickets();
+        String tickets = getAllTickets();
         if (tickets.isEmpty()) {
             interfaz.imprimirMensaje("No hay tickets registrados.");
         } else {
-            for (Ticket t : tickets) {
-                interfaz.imprimirMensaje("ID: " + t.getId() + " | Asunto: " + t.getAsunto() + 
-                                       " | Estado: " + t.getEstado() + " | Usuario: " + t.getUsuario().getNombre());
-            }
+            interfaz.imprimirMensaje(tickets);
         }
     }
 
     private void verDepartamentos() {
         interfaz.imprimirMensaje("\n=== DEPARTAMENTOS ===");
-        ArrayList<Departamento> departamentos = getAllDepartamentos();
+        String departamentos = getAllDepartamentos();
         if (departamentos.isEmpty()) {
             interfaz.imprimirMensaje("No hay departamentos registrados.");
         } else {
-            for (Departamento d : departamentos) {
-                interfaz.imprimirMensaje("ID: " + d.getId() + " | Nombre: " + d.getNombre() + 
-                                       " | Contacto: " + d.getContacto());
-            }
+            interfaz.imprimirMensaje(departamentos);
         }
     }
 
     private void verMiPerfil() {
-        if (usuarioActual != null) {
+        if (usuarioActualId != null) {
             interfaz.imprimirMensaje("\n=== MI PERFIL ===");
-            interfaz.imprimirMensaje("Nombre: " + usuarioActual.getNombre());
-            interfaz.imprimirMensaje("Correo: " + usuarioActual.getCorreo());
-            interfaz.imprimirMensaje("Teléfono: " + usuarioActual.getTelefono());
-            interfaz.imprimirMensaje("Rol: " + usuarioActual.getRol());
+            String perfil = usuarioHandler.getUsuarioInfoById(usuarioActualId);
+            interfaz.imprimirMensaje(perfil);
         }
     }
 
@@ -341,14 +329,11 @@ public class Controller {
         interfaz.imprimirMensaje("\n=== TICKETS POR ESTADO ===");
         interfaz.imprimirMensaje("Estado (Abierto/En Proceso/Cerrado): ");
         String estado = interfaz.leerTexto();
-        ArrayList<Ticket> tickets = getTicketsPorEstado(estado);
+        String tickets = getTicketsPorEstado(estado);
         if (tickets.isEmpty()) {
             interfaz.imprimirMensaje("No hay tickets con ese estado.");
         } else {
-            for (Ticket t : tickets) {
-                interfaz.imprimirMensaje("ID: " + t.getId() + " | Asunto: " + t.getAsunto() + 
-                                       " | Prioridad: " + t.getPrioridad());
-            }
+            interfaz.imprimirMensaje(tickets);
         }
     }
 
@@ -356,14 +341,11 @@ public class Controller {
         interfaz.imprimirMensaje("\n=== TICKETS POR PRIORIDAD ===");
         interfaz.imprimirMensaje("Prioridad (Baja/Media/Alta): ");
         String prioridad = interfaz.leerTexto();
-        ArrayList<Ticket> tickets = getTicketsPorPrioridad(prioridad);
+        String tickets = getTicketsPorPrioridad(prioridad);
         if (tickets.isEmpty()) {
             interfaz.imprimirMensaje("No hay tickets con esa prioridad.");
         } else {
-            for (Ticket t : tickets) {
-                interfaz.imprimirMensaje("ID: " + t.getId() + " | Asunto: " + t.getAsunto() + 
-                                       " | Estado: " + t.getEstado());
-            }
+            interfaz.imprimirMensaje(tickets);
         }
     }
 
@@ -464,14 +446,11 @@ public class Controller {
 
     private void listarUsuarios() {
         interfaz.imprimirMensaje("\n=== LISTA DE USUARIOS ===");
-        ArrayList<Usuario> usuarios = getAllUsuarios();
+        String usuarios = getAllUsuarios();
         if (usuarios.isEmpty()) {
             interfaz.imprimirMensaje("No hay usuarios registrados.");
         } else {
-            for (Usuario u : usuarios) {
-                interfaz.imprimirMensaje("ID: " + u.getId() + " | Nombre: " + u.getNombre() + 
-                                       " | Correo: " + u.getCorreo() + " | Rol: " + u.getRol());
-            }
+            interfaz.imprimirMensaje(usuarios);
         }
     }
 
@@ -512,8 +491,8 @@ public class Controller {
         interfaz.imprimirMensaje("Contacto: ");
         String contacto = interfaz.leerTexto();
         
-        Departamento depto = crearDepartamento(id, nombre, descripcion, contacto);
-        if (depto != null) {
+        boolean exito = crearDepartamento(id, nombre, descripcion, contacto);
+        if (exito) {
             interfaz.imprimirMensaje("\n✓ Departamento creado exitosamente.");
         } else {
             interfaz.imprimirMensaje("\n❌ Error al crear el departamento.");
@@ -524,21 +503,18 @@ public class Controller {
         interfaz.imprimirMensaje("\n=== MODIFICAR DEPARTAMENTO ===");
         interfaz.imprimirMensaje("ID del departamento: ");
         int id = interfaz.leerOpcion();
-        Departamento depto = getDepartamentoById(id);
+        String deptoInfo = getDepartamentoById(String.valueOf(id));
         
-        if (depto != null) {
-            interfaz.imprimirMensaje("Nuevo nombre (actual: " + depto.getNombre() + "): ");
+        if (deptoInfo != null && !deptoInfo.isEmpty()) {
+            interfaz.imprimirMensaje("Departamento actual:\n" + deptoInfo);
+            interfaz.imprimirMensaje("Nuevo nombre: ");
             String nombre = interfaz.leerTexto();
-            interfaz.imprimirMensaje("Nueva descripción (actual: " + depto.getDescripcion() + "): ");
+            interfaz.imprimirMensaje("Nueva descripción: ");
             String descripcion = interfaz.leerTexto();
-            interfaz.imprimirMensaje("Nuevo contacto (actual: " + depto.getContacto() + "): ");
+            interfaz.imprimirMensaje("Nuevo contacto: ");
             String contacto = interfaz.leerTexto();
             
-            depto.setNombre(nombre);
-            depto.setDescripcion(descripcion);
-            depto.setContacto(contacto);
-            
-            if (updateDepartamento(depto)) {
+            if (updateDepartamento(String.valueOf(id), nombre, descripcion, contacto)) {
                 interfaz.imprimirMensaje("\n✓ Departamento modificado exitosamente.");
             } else {
                 interfaz.imprimirMensaje("\n❌ Error al modificar el departamento.");
@@ -562,38 +538,31 @@ public class Controller {
 
     // ==================== MÉTODOS DE AUTENTICACIÓN (LÓGICA) ====================
     
-    public Usuario login(String correo, String password) {
-        Usuario usuario = usuarioHandler.findUsuarioByCorreoAndPassword(correo, password);
-        if (usuario != null) {
-            this.usuarioActual = usuario;
+    public String login(String correo, String password) {
+        String usuarioId = usuarioHandler.loginUsuario(correo, password);
+        if (usuarioId != null) {
+            this.usuarioActualId = usuarioId;
             this.isLogged = true;
         }
-        return usuario;
+        return usuarioId;
     }
 
-    public Usuario register(String cedula, String nombre, String correo, String password, String telefono) {
-        // Verificar si el correo ya existe
-        if (usuarioHandler.findUsuarioByCorreo(correo) != null) {
-            return null; // El usuario ya existe
+    public String register(String cedula, String nombre, String correo, String password, String telefono) {
+        String usuarioId = usuarioHandler.registrarUsuario(cedula, nombre, correo, password, telefono, "usuario");
+        if (usuarioId != null) {
+            this.usuarioActualId = usuarioId;
+            this.isLogged = true;
         }
-
-        if(usuarioHandler.findUsuarioById(cedula) != null) {
-            return null;
-        }
-        
-        Usuario usuario = usuarioHandler.addUsuario(cedula, nombre, correo, password, telefono, "usuario");
-        this.usuarioActual = usuario;
-        this.isLogged = true;
-        return usuario;
+        return usuarioId;
     }
 
     public void logout() {
-        this.usuarioActual = null;
+        this.usuarioActualId = null;
         this.isLogged = false;
     }
 
-    public Usuario getUsuarioActual() {
-        return usuarioActual;
+    public String getUsuarioActualId() {
+        return usuarioActualId;
     }
 
     public boolean isLogged() {
@@ -602,16 +571,12 @@ public class Controller {
 
     // ==================== MÉTODOS DE USUARIO ====================
     
-    public ArrayList<Usuario> getAllUsuarios() {
-        return usuarioHandler.getAllUsuarios();
+    public String getAllUsuarios() {
+        return usuarioHandler.getAllUsuariosInfo();
     }
 
-    public Usuario getUsuarioById(String id) {
-        return usuarioHandler.findUsuarioById(id);
-    }
-
-    public boolean updateUsuario(Usuario usuario) {
-        return usuarioHandler.updateUsuario(usuario);
+    public String getUsuarioById(String id) {
+        return usuarioHandler.getUsuarioInfoById(id);
     }
 
     public boolean deleteUsuario(String id) {
@@ -619,34 +584,29 @@ public class Controller {
     }
 
     public boolean cambiarRolUsuario(String usuarioId, String nuevoRol) {
-        Usuario usuario = usuarioHandler.findUsuarioById(usuarioId);
-        if (usuario != null) {
-            usuario.setRol(nuevoRol);
-            return usuarioHandler.updateUsuario(usuario);
-        }
-        return false;
+        return usuarioHandler.cambiarRolUsuario(usuarioId, nuevoRol);
     }
 
     // ==================== MÉTODOS DE DEPARTAMENTO ====================
     
-    public Departamento crearDepartamento(int id, String nombre, String descripcion, String contacto) {
-        return departamentoHandler.addDepartamento(id, nombre, descripcion, contacto);
+    public boolean crearDepartamento(int id, String nombre, String descripcion, String contacto) {
+        return departamentoHandler.crearDepartamento(id, nombre, descripcion, contacto);
     }
 
-    public ArrayList<Departamento> getAllDepartamentos() {
-        return departamentoHandler.getAllDepartamentos();
+    public String getAllDepartamentos() {
+        return departamentoHandler.getAllDepartamentosInfo();
     }
 
-    public Departamento getDepartamentoById(int id) {
-        return departamentoHandler.findDepartamentoById(id);
+    public String getDepartamentoById(String id) {
+        return departamentoHandler.getDepartamentoInfoById(id);
     }
 
-    public Departamento getDepartamentoByNombre(String nombre) {
-        return departamentoHandler.findDepartamentoByNombre(nombre);
+    public String getDepartamentoByNombre(String nombre) {
+        return departamentoHandler.getDepartamentoInfoByNombre(nombre);
     }
 
-    public boolean updateDepartamento(Departamento departamento) {
-        return departamentoHandler.updateDepartamento(departamento);
+    public boolean updateDepartamento(String id, String nombre, String descripcion, String contacto) {
+        return departamentoHandler.updateDepartamento(id, nombre, descripcion, contacto);
     }
 
     public boolean deleteDepartamento(String id) {
@@ -655,52 +615,43 @@ public class Controller {
 
     // ==================== MÉTODOS DE TICKET ====================
     
-    public Ticket crearTicket(int id, String asunto, String descripcion, String prioridad, int departamentoId) {
-        if (!isLogged || usuarioActual == null) {
-            return null; // Usuario no autenticado
+    public boolean crearTicket(int id, String asunto, String descripcion, String prioridad, int departamentoId) {
+        if (!isLogged || usuarioActualId == null) {
+            return false; // Usuario no autenticado
         }
         
-        Departamento departamento = departamentoHandler.findDepartamentoById(departamentoId);
-        if (departamento == null) {
-            return null; // Departamento no encontrado
+        return ticketHandler.crearTicket(id, asunto, descripcion, prioridad, usuarioActualId, String.valueOf(departamentoId));
+    }
+
+    public String getAllTickets() {
+        return ticketHandler.getAllTicketsInfo();
+    }
+
+    public String getTicketsPorUsuario() {
+        if (!isLogged || usuarioActualId == null) {
+            return "";
         }
-        
-        return ticketHandler.createTicket(id, asunto, descripcion, prioridad, usuarioActual, departamento);
+        return ticketHandler.getTicketsInfoByUsuario(usuarioActualId);
     }
 
-    public ArrayList<Ticket> getAllTickets() {
-        return ticketHandler.getAllTickets();
+    public String getTicketsPorUsuarioId(String usuarioId) {
+        return ticketHandler.getTicketsInfoByUsuario(usuarioId);
     }
 
-    public ArrayList<Ticket> getTicketsPorUsuario() {
-        if (!isLogged || usuarioActual == null) {
-            return new ArrayList<>();
-        }
-        return ticketHandler.getTicketsByUsuario(usuarioActual.getId());
+    public String getTicketsPorDepartamento(String departamentoId) {
+        return ticketHandler.getTicketsInfoByDepartamento(departamentoId);
     }
 
-    public ArrayList<Ticket> getTicketsPorUsuarioId(String usuarioId) {
-        return ticketHandler.getTicketsByUsuario(usuarioId);
+    public String getTicketsPorEstado(String estado) {
+        return ticketHandler.getTicketsInfoByEstado(estado);
     }
 
-    public ArrayList<Ticket> getTicketsPorDepartamento(String departamentoId) {
-        return ticketHandler.getTicketsByDepartamento(departamentoId);
+    public String getTicketsPorPrioridad(String prioridad) {
+        return ticketHandler.getTicketsInfoByPrioridad(prioridad);
     }
 
-    public ArrayList<Ticket> getTicketsPorEstado(String estado) {
-        return ticketHandler.getTicketsByEstado(estado);
-    }
-
-    public ArrayList<Ticket> getTicketsPorPrioridad(String prioridad) {
-        return ticketHandler.getTicketsByPrioridad(prioridad);
-    }
-
-    public Ticket getTicketById(int id) {
-        return ticketHandler.findTicketById(id);
-    }
-
-    public boolean updateTicket(Ticket ticket) {
-        return ticketHandler.updateTicket(ticket);
+    public String getTicketById(int id) {
+        return ticketHandler.getTicketInfoById(id);
     }
 
     public boolean cambiarEstadoTicket(int ticketId, String nuevoEstado) {
@@ -714,32 +665,38 @@ public class Controller {
     // ==================== MÉTODOS DE VALIDACIÓN Y PERMISOS ====================
     
     public boolean esAdmin() {
-        return isLogged && usuarioActual != null && usuarioActual.getRol().equalsIgnoreCase("admin");
+        if (!isLogged || usuarioActualId == null) return false;
+        String rol = usuarioHandler.getRolByUsuarioId(usuarioActualId);
+        return rol != null && rol.equalsIgnoreCase("admin");
     }
 
     public boolean esSoporte() {
-        return isLogged && usuarioActual != null && usuarioActual.getRol().equalsIgnoreCase("soporte");
+        if (!isLogged || usuarioActualId == null) return false;
+        String rol = usuarioHandler.getRolByUsuarioId(usuarioActualId);
+        return rol != null && rol.equalsIgnoreCase("soporte");
     }
 
     public boolean esUsuario() {
-        return isLogged && usuarioActual != null && usuarioActual.getRol().equalsIgnoreCase("usuario");
+        if (!isLogged || usuarioActualId == null) return false;
+        String rol = usuarioHandler.getRolByUsuarioId(usuarioActualId);
+        return rol != null && rol.equalsIgnoreCase("usuario");
     }
 
     // ==================== MÉTODOS DE ESTADÍSTICAS ====================
     
     public int getNumeroTicketsAbiertos() {
-        return ticketHandler.getTicketsByEstado("Abierto").size();
+        return ticketHandler.getNumeroTicketsByEstado("Abierto");
     }
 
     public int getNumeroTicketsEnProceso() {
-        return ticketHandler.getTicketsByEstado("En Proceso").size();
+        return ticketHandler.getNumeroTicketsByEstado("En Proceso");
     }
 
     public int getNumeroTicketsCerrados() {
-        return ticketHandler.getTicketsByEstado("Cerrado").size();
+        return ticketHandler.getNumeroTicketsByEstado("Cerrado");
     }
 
     public int getNumeroTicketsPorPrioridad(String prioridad) {
-        return ticketHandler.getTicketsByPrioridad(prioridad).size();
+        return ticketHandler.getNumeroTicketsByPrioridad(prioridad);
     }
 }

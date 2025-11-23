@@ -103,6 +103,14 @@ public class Ticket {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Ticket ticket = (Ticket) obj;
+        return id == ticket.id;
+    }
+
+    @Override
     public String toString() {
         return "Ticket{" +
                 "id=" + id +

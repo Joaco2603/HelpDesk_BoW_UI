@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact name="HelpDesk_BoW:jar">
+  <artifact build-on-make="true" name="HelpDesk_BoW:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/HelpDesk_BoW_jar</output-path>
     <root id="root">
       <element id="archive" name="HelpDesk_BoW.jar">

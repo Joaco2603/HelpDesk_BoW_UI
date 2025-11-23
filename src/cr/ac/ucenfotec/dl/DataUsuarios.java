@@ -27,4 +27,13 @@ public class DataUsuarios {
     public ArrayList<Usuario> getUsuarios() {
         return usuarios;
     }
+
+    public Usuario findUsuarioByCorreo(String correo) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getCorreo().equals(correo)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
 }

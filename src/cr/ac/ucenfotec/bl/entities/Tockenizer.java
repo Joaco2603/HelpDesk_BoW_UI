@@ -38,6 +38,14 @@ public class Tockenizer {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Tockenizer that = (Tockenizer) obj;
+        return palabra != null ? palabra.equals(that.palabra) : that.palabra == null;
+    }
+
+    @Override
     public String toString() {
         return "Tockenizer{" +
                 "palabra='" + palabra + '\'' +

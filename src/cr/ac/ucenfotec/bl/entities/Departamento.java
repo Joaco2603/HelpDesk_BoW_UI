@@ -49,6 +49,14 @@ public class Departamento {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Departamento that = (Departamento) obj;
+        return id == that.id;
+    }
+
+    @Override
     public String toString() {
         return "Departamento{" +
                 "id=" + id +

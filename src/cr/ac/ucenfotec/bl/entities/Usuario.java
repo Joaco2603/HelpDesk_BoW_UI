@@ -69,6 +69,14 @@ public class Usuario {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Usuario usuario = (Usuario) obj;
+        return id != null ? id.equals(usuario.id) : usuario.id == null;
+    }
+
+    @Override
     public String toString() {
         return "Usuario{" +
                 "id='" + id + '\'' +

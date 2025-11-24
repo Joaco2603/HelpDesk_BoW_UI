@@ -4,9 +4,17 @@ import cr.ac.ucenfotec.bl.entities.Departamento;
 
 import java.util.ArrayList;
 
+/**
+ * Capa de datos para la gestión de departamentos
+ * @author Equipo HelpDesk
+ * @version 1.0
+ */
 public class DataDepartamentos {
     private ArrayList<Departamento> departamentos;
 
+    /**
+     * Constructor por defecto que inicializa con datos de prueba
+     */
     public DataDepartamentos() {
         departamentos = new ArrayList<>();
         
@@ -17,6 +25,10 @@ public class DataDepartamentos {
         departamentos.add(new Departamento(4, "Administración", "Departamento administrativo", "admin@helpdesk.com"));
     }
 
+    /**
+     * Agrega un departamento a la lista
+     * @param departamento Departamento a agregar
+     */
     public void addDepartamento(Departamento departamento) {
         if (departamentos == null) {
             departamentos = new ArrayList<>();
@@ -24,6 +36,10 @@ public class DataDepartamentos {
         departamentos.add(departamento);
     }
 
+    /**
+     * Obtiene todos los departamentos
+     * @return Lista de departamentos
+     */
     public ArrayList<Departamento> getDepartamentos() {
         return departamentos;
     }

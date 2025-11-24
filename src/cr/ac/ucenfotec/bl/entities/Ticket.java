@@ -2,6 +2,11 @@ package cr.ac.ucenfotec.bl.entities;
 
 import java.time.LocalDateTime;
 
+/**
+ * Clase que representa un Ticket de soporte en el sistema HelpDesk
+ * @author Equipo HelpDesk
+ * @version 1.0
+ */
 public class Ticket {
     private int id;
     private String asunto;
@@ -13,11 +18,24 @@ public class Ticket {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 
+    /**
+     * Constructor por defecto
+     */
     public Ticket() {
         this.fechaCreacion = LocalDateTime.now();
         this.fechaActualizacion = LocalDateTime.now();
     }
 
+    /**
+     * Constructor completo de Ticket
+     * @param id Identificador único del ticket
+     * @param asunto Asunto del ticket
+     * @param descripcion Descripción detallada
+     * @param estado Estado actual (Abierto/En Proceso/Cerrado)
+     * @param prioridad Prioridad (Baja/Media/Alta)
+     * @param usuario Usuario que creó el ticket
+     * @param departamento Departamento asignado
+     */
     public Ticket(int id, String asunto, String descripcion, String estado, String prioridad, Usuario usuario, Departamento departamento) {
         this.id = id;
         this.asunto = asunto;
@@ -30,6 +48,7 @@ public class Ticket {
         this.fechaActualizacion = LocalDateTime.now();
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -111,6 +130,11 @@ public class Ticket {
     }
 
     @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
+
+    @Override
     public String toString() {
         return "Ticket{" +
                 "id=" + id +
@@ -118,8 +142,8 @@ public class Ticket {
                 ", descripcion='" + descripcion + '\'' +
                 ", estado='" + estado + '\'' +
                 ", prioridad='" + prioridad + '\'' +
-                ", usuario=" + usuario.getNombre() +
-                ", departamento=" + departamento.getNombre() +
+                ", usuario=" + (usuario != null ? usuario.getNombre() : "N/A") +
+                ", departamento=" + (departamento != null ? departamento.getNombre() : "N/A") +
                 ", fechaCreacion=" + fechaCreacion +
                 '}';
     }

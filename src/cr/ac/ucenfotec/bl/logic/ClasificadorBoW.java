@@ -4,14 +4,21 @@ import cr.ac.ucenfotec.bl.entities.Tockenizer;
 import cr.ac.ucenfotec.dl.DataDiccionarioEmocional;
 import cr.ac.ucenfotec.dl.DataDiccionarioTecnico;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clasificador Bag of Words para análisis de texto en tickets
+ * @author Equipo HelpDesk
+ * @version 1.0
+ */
 public class ClasificadorBoW {
     private DataDiccionarioEmocional diccionarioEmocional;
     private DataDiccionarioTecnico diccionarioTecnico;
 
+    /**
+     * Constructor por defecto
+     */
     public ClasificadorBoW() {
         this.diccionarioEmocional = new DataDiccionarioEmocional();
         this.diccionarioTecnico = new DataDiccionarioTecnico();
@@ -19,6 +26,8 @@ public class ClasificadorBoW {
 
     /**
      * Clasifica el estado emocional del texto
+     * @param texto Texto a analizar
+     * @return Categoría emocional detectada
      */
     public String clasificarEmocional(String texto) {
         if (texto == null || texto.isEmpty()) {
@@ -75,6 +84,8 @@ public class ClasificadorBoW {
 
     /**
      * Clasifica la categoría técnica del texto
+     * @param texto Texto a analizar
+     * @return Categoría técnica detectada
      */
     public String clasificarTecnico(String texto) {
         if (texto == null || texto.isEmpty()) {
@@ -131,6 +142,8 @@ public class ClasificadorBoW {
 
     /**
      * Sugiere la prioridad basándose en el análisis emocional
+     * @param texto Texto a analizar
+     * @return Prioridad sugerida
      */
     public String sugerirPrioridad(String texto) {
         String categoriaEmocional = clasificarEmocional(texto);
@@ -149,6 +162,8 @@ public class ClasificadorBoW {
 
     /**
      * Sugiere el departamento basándose en la categoría técnica
+     * @param texto Texto a analizar
+     * @return ID del departamento sugerido
      */
     public int sugerirDepartamento(String texto) {
         String categoriaTecnica = clasificarTecnico(texto);
@@ -168,6 +183,9 @@ public class ClasificadorBoW {
 
     /**
      * Análisis completo del ticket
+     * @param asunto Asunto del ticket
+     * @param descripcion Descripción del ticket
+     * @return Objeto con el análisis completo
      */
     public AnalisisTicket analizarTicket(String asunto, String descripcion) {
         String textoCompleto = asunto + " " + descripcion;

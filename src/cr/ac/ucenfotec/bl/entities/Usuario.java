@@ -1,49 +1,38 @@
 package cr.ac.ucenfotec.bl.entities;
 
-public class Usuario {
-    private String id;
-    private String nombre;
-    private String correo;
+/**
+ * Clase que representa un Usuario del sistema HelpDesk
+ * Hereda de Persona y añade funcionalidades específicas de usuario
+ * @author Equipo HelpDesk
+ * @version 1.0
+ */
+public class Usuario extends Persona {
     private String password;
-    private String telefono;
     private String rol;
 
+    /**
+     * Constructor por defecto
+     */
     public Usuario() {
+        super();
     }
 
+    /**
+     * Constructor completo de Usuario
+     * @param id Identificación única
+     * @param nombre Nombre completo
+     * @param correo Correo electrónico
+     * @param password Contraseña
+     * @param telefono Número de teléfono
+     * @param rol Rol del usuario (admin, soporte, usuario)
+     */
     public Usuario(String id, String nombre, String correo, String password, String telefono, String rol) {
-        this.id = id;
-        this.nombre = nombre;
-        this.correo = correo;
+        super(id, nombre, correo, telefono);
         this.password = password;
-        this.telefono = telefono;
         this.rol = rol;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
+    // Getters y Setters específicos
     public String getPassword() {
         return password;
     }
@@ -52,14 +41,7 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
+    @Override
     public String getRol() {
         return rol;
     }
@@ -72,8 +54,14 @@ public class Usuario {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
         Usuario usuario = (Usuario) obj;
         return id != null ? id.equals(usuario.id) : usuario.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
@@ -87,6 +75,3 @@ public class Usuario {
                 '}';
     }
 }
-
-
-

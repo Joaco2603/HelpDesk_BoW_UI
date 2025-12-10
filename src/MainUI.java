@@ -1,9 +1,12 @@
-import cr.ac.ucenfotec.tl.Controller;
-import java.io.IOException;
+import cr.ac.ucenfotec.ui.javafx.MainApp;
 
+/**
+ * Punto de entrada principal para la aplicación HelpDesk BoW
+ * Lanza la interfaz JavaFX
+ */
 public class MainUI {
-    public static void main(String[] args) throws IOException {
-        Controller controller = new Controller();
-        controller.start();
+    public static void main(String[] args) {
+        // Lanzar aplicación JavaFX
+        MainApp.main(args);
     }
 }

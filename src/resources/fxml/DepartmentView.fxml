@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="cr.ac.ucenfotec.ui.javafx.DepartmentViewController"
+      spacing="15" styleClass="view-container">
+    
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <!-- Título -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="🏢 Gestión de Departamentos" styleClass="view-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+    </HBox>
+    
+    <Separator/>
+    
+    <!-- Contenedor principal con split -->
+    <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">
+        
+        <!-- Panel izquierdo: Tabla de departamentos -->
+        <VBox spacing="10">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+            
+            <Label text="Lista de Departamentos" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            
+            <TableView fx:id="departmentsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                    <TableColumn fx:id="nombreColumn" text="Nombre" prefWidth="180"/>
+                    <TableColumn fx:id="descripcionColumn" text="Descripción" prefWidth="250"/>
+                    <TableColumn fx:id="contactoColumn" text="Contacto" prefWidth="180"/>
+                </columns>
+            </TableView>
+        </VBox>
+        
+        <!-- Panel derecho: Formulario de departamentos -->
+        <VBox spacing="15">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+            
+            <Label text="Detalles del Departamento" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
+                    
+                    <!-- Nombre -->
+                    <VBox spacing="5">
+                        <Label text="Nombre del Departamento *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="nombreField" 
+                                  promptText="Ej: Soporte Técnico"/>
+                    </VBox>
+                    
+                    <!-- Descripción -->
+                    <VBox spacing="5">
+                        <Label text="Descripción *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextArea fx:id="descripcionArea" 
+                                 promptText="Describa las funciones y responsabilidades del departamento"
+                                 wrapText="true" prefRowCount="6"/>
+                    </VBox>
+                    
+                    <!-- Contacto -->
+                    <VBox spacing="5">
+                        <Label text="Información de Contacto *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="contactoField" 
+                                  promptText="Ej: soporte@helpdesk.com o 2222-3333"/>
+                    </VBox>
+                    
+                    <!-- Información adicional -->
+                    <VBox spacing="3" styleClass="info-box">
+                        <padding>
+                            <Insets top="8" right="8" bottom="8" left="8"/>
+                        </padding>
+                        <Label text="ℹ️ Información" styleClass="info-title">
+                            <font>
+                                <Font name="System Bold" size="10"/>
+                            </font>
+                        </Label>
+                        <Label text="Los departamentos son unidades organizacionales que se encargan de resolver tickets específicos." 
+                               styleClass="info-text" wrapText="true">
+                            <font>
+                                <Font size="9"/>
+                            </font>
+                        </Label>
+                        <Label text="Cada ticket debe ser asignado a un departamento para su resolución." 
+                               styleClass="info-text" wrapText="true">
+                            <font>
+                                <Font size="9"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    
+                    <!-- Botones de acción -->
+                    <VBox spacing="8">
+                        <padding>
+                            <Insets top="10"/>
+                        </padding>
+                        
+                        <Button fx:id="createButton" text="➕ Crear Departamento" 
+                               onAction="#handleCreate" styleClass="primary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="updateButton" text="✏️ Actualizar" 
+                               onAction="#handleUpdate" styleClass="secondary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="deleteButton" text="🗑️ Eliminar" 
+                               onAction="#handleDelete" styleClass="danger-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="clearButton" text="🔄 Limpiar" 
+                               onAction="#handleClear" styleClass="secondary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </SplitPane>
+</VBox>

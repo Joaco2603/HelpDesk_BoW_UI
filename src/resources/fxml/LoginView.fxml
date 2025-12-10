@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="cr.ac.ucenfotec.ui.javafx.LoginController"
+      alignment="CENTER" spacing="20" styleClass="login-container">
+    
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+    
+    <!-- Logo/Título -->
+    <VBox alignment="CENTER" spacing="10">
+        <Text text="HelpDesk BoW" styleClass="login-title">
+            <font>
+                <Font name="System Bold" size="32"/>
+            </font>
+        </Text>
+        <Text text="Sistema de Gestión de Tickets" styleClass="login-subtitle">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Text>
+    </VBox>
+    
+    <!-- Formulario de Login -->
+    <VBox spacing="15" alignment="CENTER">
+        <VBox spacing="5">
+            <Label text="Correo Electrónico" styleClass="field-label"/>
+            <TextField fx:id="emailField" promptText="ejemplo@correo.com" 
+                      styleClass="login-field" prefWidth="300"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Contraseña" styleClass="field-label"/>
+            <PasswordField fx:id="passwordField" promptText="••••••••" 
+                          styleClass="login-field" prefWidth="300"/>
+        </VBox>
+        
+        <Label fx:id="messageLabel" styleClass="message-label" wrapText="true" 
+               maxWidth="300" minHeight="20"/>
+        
+        <Button fx:id="loginButton" text="Iniciar Sesión" 
+                onAction="#handleLogin" styleClass="primary-button" 
+                prefWidth="300" prefHeight="40">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Button>
+        
+        <HBox spacing="5" alignment="CENTER">
+            <Text text="¿No tienes cuenta?"/>
+            <Hyperlink fx:id="registerLink" text="Registrarse" 
+                      onAction="#handleRegister"/>
+        </HBox>
+    </VBox>
+    
+    <!-- Información de prueba -->
+    <VBox spacing="5" alignment="CENTER" styleClass="info-box">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <Text text="Usuarios de prueba:" styleClass="info-title">
+            <font>
+                <Font name="System Bold" size="11"/>
+            </font>
+        </Text>
+        <Text text="Admin: admin@helpdesk.com / admin123" styleClass="info-text">
+            <font>
+                <Font size="10"/>
+            </font>
+        </Text>
+        <Text text="Usuario: juan@example.com / 1234" styleClass="info-text">
+            <font>
+                <Font size="10"/>
+            </font>
+        </Text>
+    </VBox>
+</VBox>

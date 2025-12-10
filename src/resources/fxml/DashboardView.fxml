@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="cr.ac.ucenfotec.ui.javafx.DashboardController"
+            fx:id="mainContainer" styleClass="dashboard-container">
+    
+    <!-- Barra lateral izquierda (Navegación) -->
+    <left>
+        <VBox styleClass="sidebar" spacing="10" prefWidth="220">
+            <padding>
+                <Insets top="20" right="10" bottom="20" left="10"/>
+            </padding>
+            
+            <!-- Header del usuario -->
+            <VBox spacing="5" styleClass="user-info">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Bienvenido" styleClass="welcome-text">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Label>
+                <Label fx:id="userNameLabel" text="Usuario" styleClass="user-name">
+                    <font>
+                        <Font name="System Bold" size="16"/>
+                    </font>
+                </Label>
+                <Label fx:id="userRoleLabel" text="ROL" styleClass="user-role">
+                    <font>
+                        <Font size="11"/>
+                    </font>
+                </Label>
+            </VBox>
+            
+            <Separator/>
+            
+            <!-- Botones de navegación -->
+            <VBox spacing="8">
+                <Label text="NAVEGACIÓN" styleClass="section-label">
+                    <font>
+                        <Font name="System Bold" size="11"/>
+                    </font>
+                    <padding>
+                        <Insets left="10" top="10" bottom="5"/>
+                    </padding>
+                </Label>
+                
+                <Button fx:id="ticketsButton" text="📋 Tickets" 
+                        onAction="#handleTickets" styleClass="nav-button" 
+                        maxWidth="Infinity">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </Button>
+                
+                <Button fx:id="usersButton" text="👥 Usuarios" 
+                        onAction="#handleUsers" styleClass="nav-button" 
+                        maxWidth="Infinity">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </Button>
+                
+                <Button fx:id="departmentsButton" text="🏢 Departamentos" 
+                        onAction="#handleDepartments" styleClass="nav-button" 
+                        maxWidth="Infinity">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </Button>
+            </VBox>
+            
+            <!-- Espaciador -->
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <!-- Botón de cerrar sesión -->
+            <Button fx:id="logoutButton" text="🚪 Cerrar Sesión" 
+                    onAction="#handleLogout" styleClass="logout-button" 
+                    maxWidth="Infinity">
+                <font>
+                    <Font size="13"/>
+                </font>
+            </Button>
+        </VBox>
+    </left>
+    
+    <!-- Área de contenido principal -->
+    <center>
+        <VBox fx:id="contentArea" styleClass="content-area">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- El contenido dinámico se cargará aquí -->
+            <Label text="Cargando..." styleClass="loading-text">
+                <font>
+                    <Font size="16"/>
+                </font>
+            </Label>
+        </VBox>
+    </center>
+</BorderPane>

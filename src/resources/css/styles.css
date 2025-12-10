@@ -1,0 +1,331 @@
+/* ============================================
+   Estilos Generales para HelpDesk BoW
+   ============================================ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 13px;
+}
+
+/* ============================================
+   Login Container
+   ============================================ */
+
+.login-container {
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa, #e8ecf1);
+    -fx-border-color: #d1d9e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.login-title {
+    -fx-fill: #2c3e50;
+}
+
+.login-subtitle {
+    -fx-fill: #7f8c8d;
+}
+
+.login-field {
+    -fx-background-color: white;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.login-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+}
+
+/* ============================================
+   Dashboard Container
+   ============================================ */
+
+.dashboard-container {
+    -fx-background-color: #ecf0f1;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+
+.sidebar {
+    -fx-background-color: #2c3e50;
+    -fx-border-color: #34495e;
+    -fx-border-width: 0 1 0 0;
+}
+
+.user-info {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 8;
+}
+
+.welcome-text {
+    -fx-text-fill: #95a5a6;
+}
+
+.user-name {
+    -fx-text-fill: white;
+}
+
+.user-role {
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+}
+
+.section-label {
+    -fx-text-fill: #95a5a6;
+}
+
+/* ============================================
+   Navigation Buttons
+   ============================================ */
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ecf0f1;
+    -fx-cursor: hand;
+    -fx-padding: 12 15 12 15;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.nav-button:hover {
+    -fx-background-color: #34495e;
+}
+
+.nav-button.active-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.logout-button {
+    -fx-background-color: #c0392b;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+}
+
+.logout-button:hover {
+    -fx-background-color: #e74c3c;
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+
+.content-area {
+    -fx-background-color: white;
+}
+
+.view-container {
+    -fx-background-color: white;
+}
+
+.view-title {
+    -fx-text-fill: #2c3e50;
+}
+
+.section-title {
+    -fx-text-fill: #34495e;
+}
+
+/* ============================================
+   Form Elements
+   ============================================ */
+
+.field-label {
+    -fx-text-fill: #2c3e50;
+}
+
+.text-field, .text-area, .combo-box {
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.primary-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.primary-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.secondary-button {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.danger-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.danger-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* ============================================
+   Tables
+   ============================================ */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #2c3e50;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #ecf0f1;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+/* ============================================
+   Info Box
+   ============================================ */
+
+.info-box {
+    -fx-background-color: #e8f4f8;
+    -fx-border-color: #3498db;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.info-title {
+    -fx-text-fill: #2c3e50;
+}
+
+.info-text {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* ============================================
+   Classification Label
+   ============================================ */
+
+.classification-label {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #dfe6e9;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 10;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ============================================
+   Messages
+   ============================================ */
+
+.message-label {
+    -fx-text-fill: #c0392b;
+    -fx-font-size: 12px;
+}
+
+.hint-label {
+    -fx-text-fill: #95a5a6;
+    -fx-font-style: italic;
+}
+
+/* ============================================
+   Loading
+   ============================================ */
+
+.loading-text {
+    -fx-text-fill: #95a5a6;
+}
+
+/* ============================================
+   Separator
+   ============================================ */
+
+.separator {
+    -fx-background-color: #dfe6e9;
+}
+
+/* ============================================
+   ScrollPane
+   ============================================ */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ============================================
+   SplitPane
+   ============================================ */
+
+.split-pane {
+    -fx-background-color: white;
+}
+
+.split-pane-divider {
+    -fx-background-color: #dfe6e9;
+    -fx-padding: 0 2 0 2;
+}
+
+/* ============================================
+   Hyperlink
+   ============================================ */
+
+.hyperlink {
+    -fx-text-fill: #3498db;
+    -fx-cursor: hand;
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}

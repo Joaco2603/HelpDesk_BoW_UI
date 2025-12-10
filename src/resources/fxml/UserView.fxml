@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="cr.ac.ucenfotec.ui.javafx.UserViewController"
+      spacing="15" styleClass="view-container">
+    
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <!-- Título -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="👥 Gestión de Usuarios" styleClass="view-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+    </HBox>
+    
+    <Separator/>
+    
+    <!-- Contenedor principal con split -->
+    <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">
+        
+        <!-- Panel izquierdo: Tabla de usuarios -->
+        <VBox spacing="10">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+            
+            <Label text="Lista de Usuarios" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            
+            <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="100" visible="false"/>
+                    <TableColumn fx:id="nombreColumn" text="Nombre" prefWidth="180"/>
+                    <TableColumn fx:id="correoColumn" text="Correo" prefWidth="200"/>
+                    <TableColumn fx:id="telefonoColumn" text="Teléfono" prefWidth="120"/>
+                    <TableColumn fx:id="rolColumn" text="Rol" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+        
+        <!-- Panel derecho: Formulario de usuarios -->
+        <VBox spacing="15">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+            
+            <Label text="Detalles del Usuario" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
+                    
+                    <!-- Nombre -->
+                    <VBox spacing="5">
+                        <Label text="Nombre Completo *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="nombreField" promptText="Juan Pérez"/>
+                    </VBox>
+                    
+                    <!-- Correo -->
+                    <VBox spacing="5">
+                        <Label text="Correo Electrónico *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="correoField" promptText="correo@ejemplo.com"/>
+                    </VBox>
+                    
+                    <!-- Teléfono -->
+                    <VBox spacing="5">
+                        <Label text="Teléfono *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="telefonoField" promptText="8888-8888"/>
+                    </VBox>
+                    
+                    <!-- Password -->
+                    <VBox spacing="5">
+                        <Label text="Contraseña *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" 
+                                      promptText="Dejar vacío para no cambiar"/>
+                        <Label text="* Requerido solo para nuevos usuarios" 
+                               styleClass="hint-label">
+                            <font>
+                                <Font size="10" />
+                            </font>
+                        </Label>
+                    </VBox>
+                    
+                    <!-- Rol -->
+                    <VBox spacing="5">
+                        <Label text="Rol *" styleClass="field-label">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Label>
+                        <ComboBox fx:id="rolCombo" maxWidth="Infinity"/>
+                    </VBox>
+                    
+                    <!-- Información de roles -->
+                    <VBox spacing="3" styleClass="info-box">
+                        <padding>
+                            <Insets top="8" right="8" bottom="8" left="8"/>
+                        </padding>
+                        <Label text="Roles disponibles:" styleClass="info-title">
+                            <font>
+                                <Font name="System Bold" size="10"/>
+                            </font>
+                        </Label>
+                        <Label text="• admin: Acceso completo al sistema" 
+                               styleClass="info-text">
+                            <font>
+                                <Font size="9"/>
+                            </font>
+                        </Label>
+                        <Label text="• soporte: Gestiona tickets y departamentos" 
+                               styleClass="info-text">
+                            <font>
+                                <Font size="9"/>
+                            </font>
+                        </Label>
+                        <Label text="• usuario: Crea y visualiza sus tickets" 
+                               styleClass="info-text">
+                            <font>
+                                <Font size="9"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    
+                    <!-- Botones de acción -->
+                    <VBox spacing="8">
+                        <padding>
+                            <Insets top="10"/>
+                        </padding>
+                        
+                        <Button fx:id="createButton" text="➕ Crear Usuario" 
+                               onAction="#handleCreate" styleClass="primary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font name="System Bold" size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="updateButton" text="✏️ Actualizar" 
+                               onAction="#handleUpdate" styleClass="secondary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="deleteButton" text="🗑️ Eliminar" 
+                               onAction="#handleDelete" styleClass="danger-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                        
+                        <Button fx:id="clearButton" text="🔄 Limpiar" 
+                               onAction="#handleClear" styleClass="secondary-button"
+                               maxWidth="Infinity" prefHeight="35">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Button>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </SplitPane>
+</VBox>

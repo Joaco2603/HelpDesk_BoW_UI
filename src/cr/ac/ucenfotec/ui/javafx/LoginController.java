@@ -1,6 +1,6 @@
 package cr.ac.ucenfotec.ui.javafx;
 
-import cr.ac.ucenfotec.bl.logic.GestorUsuario;
+import cr.ac.ucenfotec.bl.logic.GestorUsuarioMySQL;
 import cr.ac.ucenfotec.bl.entities.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -28,11 +28,11 @@ public class LoginController {
     @FXML
     private Hyperlink registerLink;
     
-    private GestorUsuario gestorUsuario;
+    private GestorUsuarioMySQL gestorUsuario;
     
     @FXML
     public void initialize() {
-        gestorUsuario = new GestorUsuario();
+        gestorUsuario = new GestorUsuarioMySQL();
         
         // Permitir login con Enter
         passwordField.setOnKeyPressed(this::handleKeyPressed);

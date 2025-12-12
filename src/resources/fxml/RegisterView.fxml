@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="cr.ac.ucenfotec.ui.javafx.RegisterController"
+      alignment="CENTER" spacing="20" styleClass="login-container">
+    
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+    
+    <!-- Título -->
+    <VBox alignment="CENTER" spacing="10">
+        <Text text="Crear Nueva Cuenta" styleClass="login-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+        </Text>
+        <Text text="Complete el formulario para registrarse" styleClass="login-subtitle">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Text>
+    </VBox>
+    
+    <!-- Formulario de Registro -->
+    <VBox spacing="15" alignment="CENTER">
+        <VBox spacing="5">
+            <Label text="Nombre Completo" styleClass="field-label"/>
+            <TextField fx:id="nombreField" promptText="Juan Pérez" 
+                      styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Correo Electrónico" styleClass="field-label"/>
+            <TextField fx:id="correoField" promptText="ejemplo@correo.com" 
+                      styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Teléfono" styleClass="field-label"/>
+            <TextField fx:id="telefonoField" promptText="8888-8888" 
+                      styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Contraseña" styleClass="field-label"/>
+            <PasswordField fx:id="passwordField" promptText="Mínimo 4 caracteres" 
+                          styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Confirmar Contraseña" styleClass="field-label"/>
+            <PasswordField fx:id="confirmPasswordField" promptText="Repita su contraseña" 
+                          styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <VBox spacing="5">
+            <Label text="Rol" styleClass="field-label"/>
+            <ComboBox fx:id="rolCombo" promptText="Seleccione un rol" 
+                     styleClass="login-field" prefWidth="350"/>
+        </VBox>
+        
+        <Label fx:id="messageLabel" styleClass="message-label" wrapText="true" 
+               maxWidth="350" minHeight="20"/>
+        
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="registerButton" text="Registrarse" 
+                    onAction="#handleRegister" styleClass="primary-button" 
+                    prefWidth="165" prefHeight="40">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Button>
+            
+            <Button fx:id="cancelButton" text="Cancelar" 
+                    onAction="#handleCancel" styleClass="secondary-button" 
+                    prefWidth="165" prefHeight="40">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Button>
+        </HBox>
+        
+        <HBox spacing="5" alignment="CENTER">
+            <Text text="¿Ya tienes cuenta?"/>
+            <Hyperlink fx:id="loginLink" text="Iniciar Sesión" 
+                      onAction="#handleBackToLogin"/>
+        </HBox>
+    </VBox>
+</VBox>

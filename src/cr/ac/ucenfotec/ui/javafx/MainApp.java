@@ -107,14 +107,26 @@ public class MainApp extends Application {
     }
     
     /**
-     * Muestra la vista de registro (placeholder)
+     * Muestra la vista de registro de nuevos usuarios
      */
     public static void showRegisterView() throws Exception {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-        alert.setTitle("Registro");
-        alert.setHeaderText("Función de Registro");
-        alert.setContentText("La función de registro está disponible. Contacte al administrador para crear una cuenta.");
-        alert.showAndWait();
+        URL fxmlUrl = getResourceURL("/fxml/RegisterView.fxml");
+        if (fxmlUrl == null) {
+            throw new IllegalStateException("No se encontró RegisterView.fxml");
+        }
+        
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+        Parent root = loader.load();
+        
+        Scene scene = new Scene(root, 450, 650);
+        
+        URL cssUrl = getResourceURL("/css/styles.css");
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+        }
+        
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
     }
     
     public static Stage getPrimaryStage() {

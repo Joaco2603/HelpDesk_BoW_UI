@@ -1,8 +1,8 @@
 package cr.ac.ucenfotec.ui.javafx;
 
-import cr.ac.ucenfotec.bl.logic.GestorUsuario;
+import cr.ac.ucenfotec.bl.logic.GestorUsuarioMySQL;
 import cr.ac.ucenfotec.bl.entities.Usuario;
-import cr.ac.ucenfotec.dl.DataUsuarios;
+import cr.ac.ucenfotec.dl.UsuariosDAO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -67,15 +67,15 @@ public class UserViewController {
     private String usuarioId;
     private String rol;
     
-    private GestorUsuario gestorUsuario;
-    private DataUsuarios dataUsuarios;
+    private GestorUsuarioMySQL gestorUsuario;
+    private UsuariosDAO usuariosDAO;
     
     private Usuario usuarioSeleccionado;
     
     @FXML
     public void initialize() {
-        gestorUsuario = new GestorUsuario();
-        dataUsuarios = new DataUsuarios();
+        gestorUsuario = new GestorUsuarioMySQL();
+        usuariosDAO = new UsuariosDAO();
         
         // Configurar columnas de la tabla
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -104,9 +104,14 @@ public class UserViewController {
     }
     
     private void cargarUsuarios() {
-        ArrayList<Usuario> usuarios = dataUsuarios.getUsuarios();
-        ObservableList<Usuario> userList = FXCollections.observableArrayList(usuarios);
-        usersTable.setItems(userList);
+        try {
+            ArrayList<Usuario> usuarios = usuariosDAO.getUsuarios();
+            ObservableList<Usuario> userList = FXCollections.observableArrayList(usuarios);
+            usersTable.setItems(userList);
+        } catch (Exception e) {
+            showError("Error al cargar usuarios: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     @FXML
@@ -118,18 +123,18 @@ public class UserViewController {
         try {
             // Generar ID único
             String nuevoId = UUID.randomUUID().toString();
+            String nombre = nombreField.getText();
+            String correo = correoField.getText();
+            String password = passwordField.getText();
+            String telefono = telefonoField.getText();
+            String rol = rolCombo.getValue();
             
-            // Crear usuario
-            Usuario nuevoUsuario = new Usuario(
-                nuevoId,
-                nombreField.getText(),
-                correoField.getText(),
-                passwordField.getText(),
-                telefonoField.getText(),
-                rolCombo.getValue()
-            );
+            String resultado = gestorUsuario.addUsuario(nuevoId, nombre, correo, password, telefono, rol);
             
-            dataUsuarios.addUsuario(nuevoUsuario);
+            if (resultado.contains("Error")) {
+                showError(resultado);
+                return;
+            }
             
             cargarUsuarios();
             limpiarFormulario();
@@ -161,6 +166,13 @@ public class UserViewController {
             if (!passwordField.getText().isEmpty()) {
                 usuarioSeleccionado.setPassword(passwordField.getText());
             }
+
+            String resultado = gestorUsuario.updateUsuario(usuarioSeleccionado);
+
+            if (resultado.contains("Error")) {
+                showError(resultado);
+                return;
+            }
             
             usersTable.refresh();
             showInfo("Usuario actualizado exitosamente");
@@ -190,10 +202,18 @@ public class UserViewController {
         
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                dataUsuarios.getUsuarios().remove(usuarioSeleccionado);
-                cargarUsuarios();
-                limpiarFormulario();
-                showInfo("Usuario eliminado exitosamente");
+                try {
+                    String resultado = gestorUsuario.deleteUsuario(usuarioSeleccionado.getId());
+                    if (resultado.contains("exitosamente")) {
+                        cargarUsuarios();
+                        limpiarFormulario();
+                        showInfo("Usuario eliminado exitosamente");
+                    } else {
+                        showError(resultado);
+                    }
+                } catch (Exception e) {
+                    showError("Error al eliminar usuario: " + e.getMessage());
+                }
             }
         });
     }

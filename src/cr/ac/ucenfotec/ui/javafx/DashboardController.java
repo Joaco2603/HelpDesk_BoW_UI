@@ -1,8 +1,8 @@
 package cr.ac.ucenfotec.ui.javafx;
 
-import cr.ac.ucenfotec.bl.logic.GestorTicket;
-import cr.ac.ucenfotec.bl.logic.GestorUsuario;
-import cr.ac.ucenfotec.bl.logic.GestorDepartamento;
+import cr.ac.ucenfotec.bl.logic.GestorTicketMySQL;
+import cr.ac.ucenfotec.bl.logic.GestorUsuarioMySQL;
+import cr.ac.ucenfotec.bl.logic.GestorDepartamentoMySQL;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,12 +10,41 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+import java.net.URL;
+
 /**
  * Controlador principal del Dashboard
  * @author Equipo HelpDesk
  * @version 2.0
  */
 public class DashboardController {
+    
+    /**
+     * Obtiene la URL del recurso, buscando en varias ubicaciones posibles
+     */
+    private URL getResourceURL(String path) {
+        URL url = getClass().getResource(path);
+        if (url == null) {
+            url = getClass().getResource("/resources" + path);
+        }
+        if (url == null) {
+            url = getClass().getClassLoader().getResource(path.substring(1));
+        }
+        if (url == null) {
+            url = getClass().getClassLoader().getResource("resources" + path);
+        }
+        if (url == null) {
+            try {
+                java.io.File file = new java.io.File("src/resources" + path);
+                if (file.exists()) {
+                    url = file.toURI().toURL();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return url;
+    }
     @FXML
     private BorderPane mainContainer;
     
@@ -43,15 +72,15 @@ public class DashboardController {
     private String usuarioId;
     private String rol;
     
-    private GestorTicket gestorTicket;
-    private GestorUsuario gestorUsuario;
-    private GestorDepartamento gestorDepartamento;
+    private GestorTicketMySQL gestorTicket;
+    private GestorUsuarioMySQL gestorUsuario;
+    private GestorDepartamentoMySQL gestorDepartamento;
     
     @FXML
     public void initialize() {
-        gestorTicket = new GestorTicket();
-        gestorUsuario = new GestorUsuario();
-        gestorDepartamento = new GestorDepartamento();
+        gestorTicket = new GestorTicketMySQL();
+        gestorUsuario = new GestorUsuarioMySQL();
+        gestorDepartamento = new GestorDepartamentoMySQL();
     }
     
     public void setUsuario(String usuarioId, String rol) {
@@ -82,7 +111,12 @@ public class DashboardController {
     @FXML
     private void handleTickets() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TicketView.fxml"));
+            URL fxmlUrl = getResourceURL("/fxml/TicketView.fxml");
+            if (fxmlUrl == null) {
+                showError("No se encontró TicketView.fxml");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent ticketView = loader.load();
             
             TicketViewController controller = loader.getController();
@@ -102,7 +136,12 @@ public class DashboardController {
     @FXML
     private void handleUsers() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserView.fxml"));
+            URL fxmlUrl = getResourceURL("/fxml/UserView.fxml");
+            if (fxmlUrl == null) {
+                showError("No se encontró UserView.fxml");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent userView = loader.load();
             
             UserViewController controller = loader.getController();
@@ -121,7 +160,12 @@ public class DashboardController {
     @FXML
     private void handleDepartments() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DepartmentView.fxml"));
+            URL fxmlUrl = getResourceURL("/fxml/DepartmentView.fxml");
+            if (fxmlUrl == null) {
+                showError("No se encontró DepartmentView.fxml");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent deptView = loader.load();
             
             DepartmentViewController controller = loader.getController();

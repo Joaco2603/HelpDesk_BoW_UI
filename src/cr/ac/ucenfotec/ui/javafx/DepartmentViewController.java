@@ -1,8 +1,8 @@
 package cr.ac.ucenfotec.ui.javafx;
 
-import cr.ac.ucenfotec.bl.logic.GestorDepartamento;
+import cr.ac.ucenfotec.bl.logic.GestorDepartamentoMySQL;
 import cr.ac.ucenfotec.bl.entities.Departamento;
-import cr.ac.ucenfotec.dl.DataDepartamentos;
+import cr.ac.ucenfotec.dl.DepartamentosDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -56,15 +56,15 @@ public class DepartmentViewController {
     private String usuarioId;
     private String rol;
     
-    private GestorDepartamento gestorDepartamento;
-    private DataDepartamentos dataDepartamentos;
+    private GestorDepartamentoMySQL gestorDepartamento;
+    private DepartamentosDAO departamentosDAO;
     
     private Departamento departamentoSeleccionado;
     
     @FXML
     public void initialize() {
-        gestorDepartamento = new GestorDepartamento();
-        dataDepartamentos = new DataDepartamentos();
+        gestorDepartamento = new GestorDepartamentoMySQL();
+        departamentosDAO = new DepartamentosDAO();
         
         // Configurar columnas de la tabla
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -89,9 +89,14 @@ public class DepartmentViewController {
     }
     
     private void cargarDepartamentos() {
-        ArrayList<Departamento> departamentos = dataDepartamentos.getDepartamentos();
-        ObservableList<Departamento> deptList = FXCollections.observableArrayList(departamentos);
-        departmentsTable.setItems(deptList);
+        try {
+            ArrayList<Departamento> departamentos = departamentosDAO.getDepartamentos();
+            ObservableList<Departamento> deptList = FXCollections.observableArrayList(departamentos);
+            departmentsTable.setItems(deptList);
+        } catch (Exception e) {
+            showError("Error al cargar departamentos: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     @FXML
@@ -101,18 +106,17 @@ public class DepartmentViewController {
         }
         
         try {
-            // Generar ID único
-            int nuevoId = dataDepartamentos.getDepartamentos().size() + 1;
+            // Crear departamento (el ID lo genera MySQL con AUTO_INCREMENT, pasamos 0)
+            String nombre = nombreField.getText();
+            String descripcion = descripcionArea.getText();
+            String contacto = contactoField.getText();
             
-            // Crear departamento
-            Departamento nuevoDepartamento = new Departamento(
-                nuevoId,
-                nombreField.getText(),
-                descripcionArea.getText(),
-                contactoField.getText()
-            );
+            String resultado = gestorDepartamento.addDepartamento(0, nombre, descripcion, contacto);
             
-            dataDepartamentos.addDepartamento(nuevoDepartamento);
+            if (resultado.contains("Error")) {
+                showError(resultado);
+                return;
+            }
             
             cargarDepartamentos();
             limpiarFormulario();
@@ -138,6 +142,12 @@ public class DepartmentViewController {
             departamentoSeleccionado.setNombre(nombreField.getText());
             departamentoSeleccionado.setDescripcion(descripcionArea.getText());
             departamentoSeleccionado.setContacto(contactoField.getText());
+
+            String resultado = gestorDepartamento.updateDepartamento(departamentoSeleccionado);
+
+            if(resultado.contains("Error")) {
+                showInfo(resultado);
+            }
             
             departmentsTable.refresh();
             showInfo("Departamento actualizado exitosamente");
@@ -161,10 +171,18 @@ public class DepartmentViewController {
         
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                dataDepartamentos.getDepartamentos().remove(departamentoSeleccionado);
-                cargarDepartamentos();
-                limpiarFormulario();
-                showInfo("Departamento eliminado exitosamente");
+                try {
+                    String resultado = gestorDepartamento.deleteDepartamento(departamentoSeleccionado.getId());
+                    if (resultado.contains("exitosamente")) {
+                        cargarDepartamentos();
+                        limpiarFormulario();
+                        showInfo("Departamento eliminado exitosamente");
+                    } else {
+                        showError(resultado);
+                    }
+                } catch (Exception e) {
+                    showError("Error al eliminar departamento: " + e.getMessage());
+                }
             }
         });
     }

@@ -1,15 +1,15 @@
 package cr.ac.ucenfotec.ui.javafx;
 
-import cr.ac.ucenfotec.bl.logic.GestorTicket;
-import cr.ac.ucenfotec.bl.logic.GestorDepartamento;
-import cr.ac.ucenfotec.bl.logic.GestorUsuario;
-import cr.ac.ucenfotec.bl.logic.ClasificadorBoW;
+import cr.ac.ucenfotec.bl.logic.GestorTicketMySQL;
+import cr.ac.ucenfotec.bl.logic.GestorDepartamentoMySQL;
+import cr.ac.ucenfotec.bl.logic.GestorUsuarioMySQL;
+import cr.ac.ucenfotec.bl.entities.ClasificadorBoW;
 import cr.ac.ucenfotec.bl.entities.Ticket;
 import cr.ac.ucenfotec.bl.entities.Usuario;
 import cr.ac.ucenfotec.bl.entities.Departamento;
-import cr.ac.ucenfotec.dl.DataTickets;
-import cr.ac.ucenfotec.dl.DataDepartamentos;
-import cr.ac.ucenfotec.dl.DataUsuarios;
+import cr.ac.ucenfotec.dl.TicketsDAO;
+import cr.ac.ucenfotec.dl.DepartamentosDAO;
+import cr.ac.ucenfotec.dl.UsuariosDAO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,27 +79,32 @@ public class TicketViewController {
     private String usuarioId;
     private String rol;
     
-    private GestorTicket gestorTicket;
-    private GestorDepartamento gestorDepartamento;
-    private GestorUsuario gestorUsuario;
+    private GestorTicketMySQL gestorTicket;
+    private GestorDepartamentoMySQL gestorDepartamento;
+    private GestorUsuarioMySQL gestorUsuario;
     private ClasificadorBoW clasificador;
     
-    private DataTickets dataTickets;
-    private DataDepartamentos dataDepartamentos;
-    private DataUsuarios dataUsuarios;
+    private TicketsDAO ticketsDAO;
+    private DepartamentosDAO departamentosDAO;
+    private UsuariosDAO usuariosDAO;
     
     private Ticket ticketSeleccionado;
     
     @FXML
     public void initialize() {
-        gestorTicket = new GestorTicket();
-        gestorDepartamento = new GestorDepartamento();
-        gestorUsuario = new GestorUsuario();
-        clasificador = new ClasificadorBoW();
+        gestorTicket = new GestorTicketMySQL();
+        gestorDepartamento = new GestorDepartamentoMySQL();
+        gestorUsuario = new GestorUsuarioMySQL();
         
-        dataTickets = new DataTickets();
-        dataDepartamentos = new DataDepartamentos();
-        dataUsuarios = new DataUsuarios();
+        try {
+            clasificador = new ClasificadorBoW();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        ticketsDAO = new TicketsDAO();
+        departamentosDAO = new DepartamentosDAO();
+        usuariosDAO = new UsuariosDAO();
         
         // Configurar columnas de la tabla
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -133,14 +138,15 @@ public class TicketViewController {
     }
     
     private void cargarDepartamentos() {
-        ArrayList<Departamento> departamentos = dataDepartamentos.getDepartamentos();
-        departamentoCombo.setItems(FXCollections.observableArrayList(departamentos));
-        
-        // Configurar cómo se muestra cada departamento
-        departamentoCombo.setCellFactory(param -> new ListCell<Departamento>() {
-            @Override
-            protected void updateItem(Departamento item, boolean empty) {
-                super.updateItem(item, empty);
+        try {
+            ArrayList<Departamento> departamentos = departamentosDAO.getDepartamentos();
+            departamentoCombo.setItems(FXCollections.observableArrayList(departamentos));
+            
+            // Configurar cómo se muestra cada departamento
+            departamentoCombo.setCellFactory(param -> new ListCell<Departamento>() {
+                @Override
+                protected void updateItem(Departamento item, boolean empty) {
+                    super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
@@ -160,12 +166,21 @@ public class TicketViewController {
                 }
             }
         });
+        } catch (Exception e) {
+            showError("Error al cargar departamentos: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     private void cargarTickets() {
-        ArrayList<Ticket> tickets = dataTickets.getTickets();
-        ObservableList<Ticket> ticketList = FXCollections.observableArrayList(tickets);
-        ticketsTable.setItems(ticketList);
+        try {
+            ArrayList<Ticket> tickets = ticketsDAO.getTickets();
+            ObservableList<Ticket> ticketList = FXCollections.observableArrayList(tickets);
+            ticketsTable.setItems(ticketList);
+        } catch (Exception e) {
+            showError("Error al cargar tickets: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     @FXML
@@ -182,21 +197,18 @@ public class TicketViewController {
                 return;
             }
             
-            // Generar ID único
-            int nuevoId = dataTickets.getTickets().size() + 1;
+            String asunto = asuntoField.getText();
+            String descripcion = descripcionArea.getText();
+            String prioridad = prioridadCombo.getValue();
+            Departamento depto = departamentoCombo.getValue();
             
-            // Crear ticket
-            Ticket nuevoTicket = new Ticket(
-                nuevoId,
-                asuntoField.getText(),
-                descripcionArea.getText(),
-                estadoCombo.getValue(),
-                prioridadCombo.getValue(),
-                usuario,
-                departamentoCombo.getValue()
-            );
+            // El ID lo genera MySQL con AUTO_INCREMENT, pasamos 0
+            String resultado = gestorTicket.createTicket(0, asunto, descripcion, prioridad, usuario, depto);
             
-            dataTickets.addTicket(nuevoTicket);
+            if (resultado.contains("Error")) {
+                showError(resultado);
+                return;
+            }
             
             cargarTickets();
             limpiarFormulario();
@@ -224,7 +236,13 @@ public class TicketViewController {
             ticketSeleccionado.setEstado(estadoCombo.getValue());
             ticketSeleccionado.setPrioridad(prioridadCombo.getValue());
             ticketSeleccionado.setDepartamento(departamentoCombo.getValue());
-            
+
+            String resultado = gestorTicket.updateTicket(ticketSeleccionado);
+
+            if(resultado.contains("Error")) {
+                showInfo(resultado);
+            }
+
             ticketsTable.refresh();
             showInfo("Ticket actualizado exitosamente");
             
@@ -247,10 +265,18 @@ public class TicketViewController {
         
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                dataTickets.getTickets().remove(ticketSeleccionado);
-                cargarTickets();
-                limpiarFormulario();
-                showInfo("Ticket eliminado exitosamente");
+                try {
+                    String resultado = gestorTicket.deleteTicket(ticketSeleccionado.getId());
+                    if (resultado.contains("exitosamente")) {
+                        cargarTickets();
+                        limpiarFormulario();
+                        showInfo("Ticket eliminado exitosamente");
+                    } else {
+                        showError(resultado);
+                    }
+                } catch (Exception e) {
+                    showError("Error al eliminar ticket: " + e.getMessage());
+                }
             }
         });
     }
@@ -333,12 +359,12 @@ public class TicketViewController {
     }
     
     private Usuario obtenerUsuarioActual() {
-        for (Usuario u : dataUsuarios.getUsuarios()) {
-            if (u.getId().equals(usuarioId)) {
-                return u;
-            }
+        try {
+            return usuariosDAO.findUsuarioById(usuarioId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
     
     private void showError(String message) {

@@ -2,7 +2,6 @@ package cr.ac.ucenfotec.bl.logic;
 
 import cr.ac.ucenfotec.bl.entities.Usuario;
 import cr.ac.ucenfotec.dl.UsuariosDAO;
-
 import java.util.ArrayList;
 
 /**
@@ -54,14 +53,13 @@ public class GestorUsuarioMySQL {
         }
     }
 
-    //se cambió param correo para hacer el login por id
-    public String loginUsuario(String id, String password) {
+    public String loginUsuario(String correo, String password) {
         try {
-            Usuario usuarioEncontrado = usuariosDAO.findUsuarioById(id);
+            Usuario usuarioEncontrado = usuariosDAO.findUsuarioByCorreo(correo);
             if (usuarioEncontrado != null && usuarioEncontrado.getPassword().equals(password)) {
-                return "Login exitoso: " + usuarioEncontrado.toString();
+                return usuarioEncontrado.toString();
             }
-            return "Usuario no encontrado o contraseña incorrecta";
+            return "Usuario no encontrado";
         } catch (Exception e) {
             return "Error ocurrido al autenticar usuario: " + e;
         }

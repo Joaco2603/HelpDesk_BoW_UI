@@ -1,12 +1,11 @@
 package cr.ac.ucenfotec.dl;
 
+import cr.ac.ucenfotec.bl.entities.Departamento;
 import cr.ac.ucenfotec.bl.entities.Ticket;
 import cr.ac.ucenfotec.bl.entities.Usuario;
-import cr.ac.ucenfotec.bl.entities.Departamento;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 //SIN TRY CATCH PARA MANEJARLO EN EL GESTOR Y SEGUIR ARQUITECTURA
@@ -19,9 +18,9 @@ import java.util.ArrayList;
  */
 public class TicketsDAO {
     private String driver = "com.mysql.cj.jdbc.Driver";
-    private String url = "jdbc:mysql://localhost:3306/test_schema";
+    private String url = "jdbc:mysql://localhost:3306/mydatabase";
     private String user = "root";
-    private String pass = "C0s1C0s1MySQL$$";
+    private String pass = "rootpassword";
 
     /**
      * Inserta un ticket en la base de datos.
@@ -80,28 +79,39 @@ public class TicketsDAO {
         Usuario tmpUsuario = new Usuario();
         tmpUsuario.setId(rs.getString("usuarioId"));
         tmpTicket.setUsuario(tmpUsuario);
+
         Departamento tmpDepartamento = new Departamento();
         tmpDepartamento.setId(rs.getInt("departamentoId"));
         tmpTicket.setDepartamento(tmpDepartamento);
 
-        tmpTicket.setFechaCreacion(LocalDateTime.parse(rs.getString("fechaCreacion")));
-        tmpTicket.setFechaActualizacion(LocalDateTime.parse(rs.getString("fechaActualizacion")));
+        // Fix: Use getTimestamp() instead of getString() for datetime fields
+        Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
+        if (fechaCreacion != null) {
+            tmpTicket.setFechaCreacion(fechaCreacion.toLocalDateTime());
+        }
+
+        Timestamp fechaActualizacion = rs.getTimestamp("fechaActualizacion");
+        if (fechaActualizacion != null) {
+            tmpTicket.setFechaActualizacion(fechaActualizacion.toLocalDateTime());
+        }
+
         return tmpTicket;
     }
 
     public void updateTicket(Ticket ticket) throws ClassNotFoundException, SQLException {
-        //cargar driver
         Class.forName(driver);
-        //construir consulta de modificar
+
+        String fecha = ticket.getFechaActualizacion().toString().replace("T", " ");
+
         String query = "UPDATE tickets SET asunto='" + ticket.getAsunto() +
                 "', descripcion='" + ticket.getDescripcion() +
                 "', estado='" + ticket.getEstado() +
                 "', prioridad='" + ticket.getPrioridad() +
                 "', usuarioId='" + ticket.getUsuario().getId() +
                 "', departamentoId=" + ticket.getDepartamento().getId() +
-                ", fechaActualizacion='" + ticket.getFechaActualizacion() +
+                ", fechaActualizacion='" + fecha +
                 "' WHERE id=" + ticket.getId();
-        //ejecutar consulta
+
         Conector.getDataAccess(driver, url, user, pass).ejecutarQuery(query);
     }
 

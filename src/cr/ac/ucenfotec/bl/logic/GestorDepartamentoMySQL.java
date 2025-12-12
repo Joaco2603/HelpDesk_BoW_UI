@@ -2,7 +2,6 @@ package cr.ac.ucenfotec.bl.logic;
 
 import cr.ac.ucenfotec.bl.entities.Departamento;
 import cr.ac.ucenfotec.dl.DepartamentosDAO;
-
 import java.util.ArrayList;
 
 /**

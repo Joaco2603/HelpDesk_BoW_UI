@@ -15,9 +15,9 @@ import java.util.ArrayList;
  */
 public class DepartamentosDAO {
     private String driver = "com.mysql.cj.jdbc.Driver";
-    private String url = "jdbc:mysql://localhost:3306/test_schema";
+    private String url = "jdbc:mysql://localhost:3306/mydatabase";
     private String user = "root";
-    private String pass = "C0s1C0s1MySQL$$";
+    private String pass = "rootpassword";
 
     /**
      * Inserta un departamento en la base de datos.
@@ -83,10 +83,10 @@ public class DepartamentosDAO {
 
     public void updateDepartamento(Departamento departamento) throws ClassNotFoundException, SQLException {
         Class.forName(driver);
-        String query = "UPDATE departamentos SET nombre='" + departamento.getNombre() +
-                "', descripcion='" + departamento.getDescripcion() +
-                "', contacto='" + departamento.getContacto() +
-                "' WHERE id=" + departamento.getId();
+        String query = "UPDATE departamentos SET nombre = '" + departamento.getNombre() +
+                "', descripcion = '" + departamento.getDescripcion() +
+                "', contacto = '" + departamento.getContacto() +
+                "' WHERE id = " + departamento.getId();
         Conector.getDataAccess(driver, url, user, pass).ejecutarQuery(query);
     }
 

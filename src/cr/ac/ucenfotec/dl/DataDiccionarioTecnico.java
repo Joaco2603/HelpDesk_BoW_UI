@@ -1,87 +1,81 @@
 package cr.ac.ucenfotec.dl;
 
 import cr.ac.ucenfotec.bl.entities.Tockenizer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
  * Diccionario de palabras para análisis técnico
+ * SIEMPRE carga los datos desde la base de datos y los mantiene en memoria para procesamiento rápido
+ * Simula el comportamiento de un modelo de Machine Learning:
+ * - Los datos (diccionarios) se cargan desde la BD (como entrenar un modelo)
+ * - El procesamiento se hace en memoria (como hacer predicciones con un modelo entrenado)
  * @author Equipo HelpDesk
- * @version 1.0
+ * @version 2.0
  */
 public class DataDiccionarioTecnico {
+    // Listas en memoria para procesamiento rápido (como un modelo ML entrenado)
     private ArrayList<Tockenizer> redes;
     private ArrayList<Tockenizer> impresoras;
     private ArrayList<Tockenizer> cuentas;
     private ArrayList<Tockenizer> hardware;
 
+    private DiccionarioTecnicoDAO dao;
+
     /**
-     * Constructor por defecto que carga el diccionario
+     * Constructor que carga los diccionarios desde la base de datos
+     * Los datos se cargan UNA VEZ y se mantienen en memoria
+     * @param driver Driver JDBC (ej: "com.mysql.cj.jdbc.Driver")
+     * @param url URL de conexión (ej: "jdbc:mysql://localhost:3306/mydatabase")
+     * @param user Usuario de BD
+     * @param pass Contraseña de BD
+     * @throws SQLException Si hay error de conexión o consulta
+     * @throws ClassNotFoundException Si no encuentra el driver JDBC
      */
-    public DataDiccionarioTecnico() {
+    public DataDiccionarioTecnico(String driver, String url, String user, String pass) 
+            throws SQLException, ClassNotFoundException {
+        this.dao = new DiccionarioTecnicoDAO(driver, url, user, pass);
+        
+        // Inicializar listas vacías
         redes = new ArrayList<>();
         impresoras = new ArrayList<>();
         cuentas = new ArrayList<>();
         hardware = new ArrayList<>();
 
-        cargarRedes();
-        cargarImpresoras();
-        cargarCuentas();
-        cargarHardware();
+        // Cargar TODO desde la base de datos
+        cargarDesdeBaseDatos();
     }
 
-    private void cargarRedes() {
-        redes.add(new Tockenizer("red", "Técnico", "Redes"));
-        redes.add(new Tockenizer("wifi", "Técnico", "Redes"));
-        redes.add(new Tockenizer("router", "Técnico", "Redes"));
-        redes.add(new Tockenizer("cable", "Técnico", "Redes"));
-        redes.add(new Tockenizer("lan", "Técnico", "Redes"));
-        redes.add(new Tockenizer("ethernet", "Técnico", "Redes"));
-        redes.add(new Tockenizer("switch", "Técnico", "Redes"));
-        redes.add(new Tockenizer("conexión", "Técnico", "Redes"));
-        redes.add(new Tockenizer("servidor", "Técnico", "Redes"));
-        redes.add(new Tockenizer("ping", "Técnico", "Redes"));
+    /**
+     * Carga todos los diccionarios desde la base de datos
+     * Este método se ejecuta UNA VEZ al crear el objeto
+     * Los datos quedan en memoria para procesamiento rápido (simula ML)
+     */
+    private void cargarDesdeBaseDatos() throws SQLException, ClassNotFoundException {
+        // Cargar cada categoría desde la base de datos
+        redes = dao.obtenerPorCategoria("Redes");
+        impresoras = dao.obtenerPorCategoria("Impresoras");
+        cuentas = dao.obtenerPorCategoria("Cuentas");
+        hardware = dao.obtenerPorCategoria("Hardware");
+        
+        System.out.println("✓ Diccionario Técnico cargado desde BD:");
+        System.out.println("  - Redes: " + redes.size() + " palabras");
+        System.out.println("  - Impresoras: " + impresoras.size() + " palabras");
+        System.out.println("  - Cuentas: " + cuentas.size() + " palabras");
+        System.out.println("  - Hardware: " + hardware.size() + " palabras");
     }
 
-    private void cargarImpresoras() {
-        impresoras.add(new Tockenizer("impresora", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("imprimir", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("papel", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("toner", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("cartucho", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("cola", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("error", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("driver", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("escáner", "Técnico", "Impresoras"));
-        impresoras.add(new Tockenizer("configuración", "Técnico", "Impresoras"));
+    /**
+     * Recarga los datos desde la base de datos
+     * Útil para actualizar el diccionario sin reiniciar la aplicación
+     * (Por ejemplo, si se agregaron nuevas palabras a la BD)
+     */
+    public void recargar() throws SQLException, ClassNotFoundException {
+        cargarDesdeBaseDatos();
+        System.out.println("✓ Diccionario Técnico recargado desde BD");
     }
 
-    private void cargarCuentas() {
-        cuentas.add(new Tockenizer("login", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("usuario", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("contraseña", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("perfil", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("acceso", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("permiso", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("seguridad", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("auth", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("email", "Técnico", "Cuentas"));
-        cuentas.add(new Tockenizer("sesión", "Técnico", "Cuentas"));
-    }
-
-    private void cargarHardware() {
-        hardware.add(new Tockenizer("cpu", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("ram", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("disco", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("placa", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("tarjeta", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("monitor", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("mouse", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("teclado", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("fuente", "Técnico", "Hardware"));
-        hardware.add(new Tockenizer("ventilador", "Técnico", "Hardware"));
-    }
-
-    // Getters
+    // Getters - Retornan las listas en memoria (procesamiento rápido)
     public ArrayList<Tockenizer> getRedes() { return redes; }
     public ArrayList<Tockenizer> getImpresoras() { return impresoras; }
     public ArrayList<Tockenizer> getCuentas() { return cuentas; }

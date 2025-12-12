@@ -1,27 +1,42 @@
-package cr.ac.ucenfotec.bl.logic;
+package cr.ac.ucenfotec.bl.entities;
 
-import cr.ac.ucenfotec.bl.entities.Tockenizer;
 import cr.ac.ucenfotec.dl.DataDiccionarioEmocional;
 import cr.ac.ucenfotec.dl.DataDiccionarioTecnico;
-
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Clasificador Bag of Words para análisis de texto en tickets
+ * Clasificador Bag of Words para análisis de texto en tickets Simula un modelo
+ * de Machine Learning: 1. Carga diccionarios desde BD (entrenamiento) 2.
+ * Procesa en memoria (predicción rápida)
+ *
  * @author Equipo HelpDesk
- * @version 1.0
+ * @version 2.0
  */
+
 public class ClasificadorBoW {
     private DataDiccionarioEmocional diccionarioEmocional;
     private DataDiccionarioTecnico diccionarioTecnico;
 
     /**
-     * Constructor por defecto
+     * Constructor que carga diccionarios desde la base de datos
+     * Los diccionarios se cargan UNA VEZ y se mantienen en memoria
+     * @throws SQLException Si hay error de conexión o consulta
+     * @throws ClassNotFoundException Si no encuentra el driver JDBC
      */
-    public ClasificadorBoW() {
-        this.diccionarioEmocional = new DataDiccionarioEmocional();
-        this.diccionarioTecnico = new DataDiccionarioTecnico();
+    public ClasificadorBoW() throws SQLException, ClassNotFoundException {
+        System.out.println("\n=== Inicializando Clasificador BoW ===");
+        
+        // Credenciales hardcodeadas
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/mydatabase";
+        String user = "root";
+        String pass = "rootpassword";
+        
+        this.diccionarioEmocional = new DataDiccionarioEmocional(driver, url, user, pass);
+        this.diccionarioTecnico = new DataDiccionarioTecnico(driver, url, user, pass);
+        System.out.println("=== Clasificador listo para usar ===");
     }
 
     /**

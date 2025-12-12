@@ -15,9 +15,9 @@ import java.util.ArrayList;
  */
 public class UsuariosDAO {
     private String driver = "com.mysql.cj.jdbc.Driver";
-    private String url = "jdbc:mysql://localhost:3306/test_schema";
+    private String url = "jdbc:mysql://localhost:3306/mydatabase";
     private String user = "root";
-    private String pass = "C0s1C0s1MySQL$$";
+    private String pass = "rootpassword";
 
     /**
      * Inserta un usuario en la base de datos.
@@ -100,27 +100,20 @@ public class UsuariosDAO {
         Conector.getDataAccess(driver, url, user, pass).ejecutarQuery(query);
     }
 
-    //se cambió param correo para hacer el login por id entonces ya no es necesario
-/*
-    public Usuario findUsuarioByCorreo(String correo) {
-        Usuario usuarioEncontrado = null;
-        try {
-            Class.forName(driver);
-            String query = "SELECT id, nombre, correo, telefono, password, rol FROM usuarios WHERE correo = '" + correo + "'";
-            ResultSet rs = Conector.getDataAccess(driver, url, user, pass).ejecutarSQL(query);
-            if (rs.next()) {
-                usuarioEncontrado = new Usuario();
-                usuarioEncontrado.setId(rs.getString("id"));
-                usuarioEncontrado.setNombre(rs.getString("nombre"));
-                usuarioEncontrado.setCorreo(rs.getString("correo"));
-                usuarioEncontrado.setTelefono(rs.getString("telefono"));
-                usuarioEncontrado.setPassword(rs.getString("password"));
-                usuarioEncontrado.setRol(rs.getString("rol"));
-            }
-        } catch (Exception e) {
-            System.out.println("Error ocurrido al buscar usuario por correo: " + e.getMessage());
+    public Usuario findUsuarioByCorreo(String correo) throws ClassNotFoundException, SQLException {
+        Class.forName(driver);
+        String query = "SELECT id, nombre, correo, telefono, password, rol FROM usuarios WHERE correo='" + correo + "'";
+        ResultSet rs = Conector.getDataAccess(driver, url, user, pass).ejecutarSQL(query);
+        if (rs.next()) {
+            Usuario usuario = new Usuario();
+            usuario.setId(rs.getString("id"));
+            usuario.setNombre(rs.getString("nombre"));
+            usuario.setCorreo(rs.getString("correo"));
+            usuario.setTelefono(rs.getString("telefono"));
+            usuario.setPassword(rs.getString("password"));
+            usuario.setRol(rs.getString("rol"));
+            return usuario;
         }
-        return usuarioEncontrado;
+        return null;
     }
- */
 }

@@ -6,6 +6,7 @@ package cr.ac.ucenfotec.bl.entities;
  * @version 1.0
  */
 public abstract class Persona {
+    
     protected String id;
     protected String nombre;
     protected String correo;
@@ -69,6 +70,18 @@ public abstract class Persona {
      * @return String con el rol
      */
     public abstract String getRol();
+    
+    /**
+     * Método abstracto para obtener la contraseña
+     * @return String con la contraseña
+     */
+    public abstract String getPassword();
+    
+    /**
+     * Método abstracto para establecer la contraseña
+     * @param password La contraseña a establecer
+     */
+    public abstract void setPassword(String password);
 
     @Override
     public boolean equals(Object obj) {
